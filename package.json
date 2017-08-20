@@ -1,0 +1,23 @@
+{
+  "name": "mailer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minddriven/mailer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/minddriven/mailer/issues"
+  },
+  "homepage": "https://github.com/minddriven/mailer#readme",
+  "dependencies": {
+    "kafka-node": "^2.2.0",
+    "pretty-error": "^2.1.1"
+  }
+}
