@@ -3,18 +3,9 @@ const assert = require('assert');
 require('pretty-error').start();
 
 const producer = new kafka.Producer(new kafka.Client());
-let consumer;
-
+const consumer = new kafka.Consumer(new kafka.Client(), [{topic: 'email'}], {autoCommit: true});
 
 describe('Integration Tests', ()=> {
-
-  before(function () {
-    consumer = new kafka.Consumer(new kafka.Client(), [{topic: 'email'}], {autoCommit: true});
-  });
-
-  after(function (done) {
-    consumer.close(done);
-  });
 
   before(function (done) {
     producer.on('ready', () => {
@@ -25,15 +16,20 @@ describe('Integration Tests', ()=> {
     })
   });
 
-
   it('should publish a new Email when `user.registration` events is consumed', (done)=> {
 
     // arrange & assert
-    consumer.once('message', function (message) {
+    let arr = [];
+    consumer.on('message', function (message) {
+      arr.push(message.value);
 
-      // assert.equal(message.value, 'User has been registered: Old MacDonald');
-      // assert.equal(message.value, 'Order has been created: had a farm');
-      done();
+      if (arr.length == 2) {
+        assert.deepEqual(arr.sort(), ['Order has been created: had a farm', 'User has been registered: Old MacDonald']);
+        consumer.close();
+        producer.close();
+        done();
+      }
+
     });
 
     // act
