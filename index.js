@@ -6,7 +6,10 @@ const kafka = require('kafka-node');
 
 const consumer = new kafka.Consumer(
   new kafka.Client(),
-  [{topic: 'user.registration'}, {topic: 'order.creation'}],
+  [
+    {topic: 'user.registration'},
+    {topic: 'order.creation'}
+  ],
   {autoCommit: true}
 );
 
