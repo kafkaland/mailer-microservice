@@ -16,7 +16,7 @@ describe('Integration Tests', ()=> {
     })
   });
 
-  it('should publish a new Email when `user.registration` events is consumed', (done)=> {
+  it('should work like a boss', (done)=> {
 
     // arrange & assert
     let arr = [];
