@@ -3,41 +3,46 @@ const assert = require('assert');
 require('pretty-error').start();
 
 const producer = new kafka.Producer(new kafka.Client());
-const consumer = new kafka.Consumer(new kafka.Client(), [{topic: 'email'}], {autoCommit: true});
+let consumer;
 
 describe('Integration Tests', ()=> {
 
   before(function (done) {
     producer.on('ready', () => {
       producer.createTopics(['user.registration', 'order.creation', 'email'], () => {
-        require('./index'); // start flow when topic is created
+
+        // start the flow when topics are created
+        require('./index');
+
+        // create a consumer when topics are created
+        consumer = new kafka.Consumer(new kafka.Client(), [{topic: 'email'}]);
         done();
       });
     })
   });
+
+  after(done => consumer.close(done));
+  after(done => producer.close(done));
 
   it('should work like a boss', (done)=> {
 
     // arrange & assert
     let arr = [];
     consumer.on('message', function (message) {
-      arr.push(message.value);
+      arr.push(JSON.parse(message.value).to);
 
       if (arr.length == 2) {
-        assert.deepEqual(arr.sort(), ['Order has been created: had a farm', 'User has been registered: Old MacDonald']);
-        consumer.close();
-        producer.close();
-        done();
+        assert.deepEqual(arr.sort(), ['one@localhost', 'two@localhost']);
+        consumer.commit(done);
       }
-
     });
 
     // act
-    var message = [
-      {topic: 'user.registration', messages: ['Old MacDonald']},
-      {topic: 'order.creation', messages: ['had a farm']},
+    var messages = [
+      {topic: 'user.registration', messages: JSON.stringify({email: 'one@localhost', name: 'Old MacDonald'})},
+      {topic: 'order.creation', messages: JSON.stringify({email: 'two@localhost', amount: 10})},
     ];
-    producer.send(message, (err)=> {
+    producer.send(messages, (err)=> {
       if (err) console.log(err);
     });
 

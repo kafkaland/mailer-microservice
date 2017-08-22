@@ -27,19 +27,28 @@ const producer = new kafka.Producer(new kafka.Client());
  */
 
 consumer.on('message', (message)=> {
+  const payload = JSON.parse(message.value);
 
   const actions = {
     'user.registration': function () {
-      return 'User has been registered: ' + message.value;
+      return {
+        to: payload.email,
+        subject: 'Welcome aboard!',
+        text: 'nice to meet you'
+      }
     },
     'order.creation': function () {
-      return 'Order has been created: ' + message.value;
+      return {
+        to: payload.email,
+        subject: 'New Order',
+        text: 'Congrats!'
+      }
     }
   };
 
   producer.send([{
     topic: OUT_TOPIC,
-    messages: [actions[message.topic]()]
+    messages: JSON.stringify(actions[message.topic]())
   }], function (err) {
     if (err) console.log(err);
   });
