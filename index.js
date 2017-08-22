@@ -1,26 +1,29 @@
 const kafka = require('kafka-node');
 
+const IN_TOPICS = [
+  {topic: 'user.registration'},
+  {topic: 'order.creation'}
+];
+const OUT_TOPIC = 'email';
+
 /**
- * Init kafka consumer
+ * IN: kafka consumer
  */
 
 const consumer = new kafka.Consumer(
   new kafka.Client(),
-  [
-    {topic: 'user.registration'},
-    {topic: 'order.creation'}
-  ],
+  IN_TOPICS,
   {autoCommit: true}
 );
 
 /**
- * Init kafka producer
+ * OUT: kafka producer
  */
 
 const producer = new kafka.Producer(new kafka.Client());
 
 /**
- * Fire in the hole!
+ * I'm in Position
  */
 
 consumer.on('message', (message)=> {
@@ -35,7 +38,7 @@ consumer.on('message', (message)=> {
   };
 
   producer.send([{
-    topic: 'email',
+    topic: OUT_TOPIC,
     messages: [actions[message.topic]()]
   }], function (err) {
     if (err) console.log(err);
