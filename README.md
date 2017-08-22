@@ -1,4 +1,5 @@
 # Mailer microservice
+[![Build Status](https://travis-ci.org/kafkaland/mailer-microservice.svg?branch=master)](https://travis-ci.org/kafkaland/mailer-microservice)
 
 A simple microservice that contains project specific business logic.
 
