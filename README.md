@@ -1,11 +1,15 @@
 # Mailer microservice
 
-A simple microservice that contains project specific business logic
+A simple microservice that contains project specific business logic.
 
 ## Input
+
 Subscribes to the following topics:
-1. `user.registration` - if a new user has been registered
-1. `cart.creation` - if a new cart has been created
+
+| topic name         | message example                                  |
+|--------------------|--------------------------------------------------|
+| `user.registration`  | `{email: 'one@localhost', name: 'Old MacDonald'}`|
+| `cart.creation`      | `{email: 'two@localhost', amount: 10}`           |
 
 ## Control
 Creates an appropriate email based on incoming event
